@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Конференция Силаэдр</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=5acc5d7f-ff8d-4939-9a91-d18a1d9f418c" type="text/javascript"></script>
+    <script>
+        ymaps.ready(init);
+
+        function init() {
+            var myMap = new ymaps.Map("map", {
+                    center: [55.76, 37.64],
+                    zoom: 10,
+                    controls: ["zoomControl"]
+                });
+
+            {% for i in range(0, schools|length) %}
+            school{{i}} = new ymaps.Placemark([{{ schools.coords[i] }}], {
+                        balloonContent: '{{ schools.school[i] }}'
+                    }, {
+                        preset: 'islands#circleDotIcon',
+                        iconColor: '#b33232'
+                    });
+
+            myMap.geoObjects.add(school{{i}});
+            {% endfor %}
+        }
+    </script>
+    <style>
+        html, body, #map {
+            width: 100%; height: 100%; padding: 0; margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+</body>
+</html>

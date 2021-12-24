@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление метки с собственным изображением</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=5acc5d7f-ff8d-4939-9a91-d18a1d9f418c" type="text/javascript"></script>
+    <script>
+        ymaps.ready(init);
+
+        function init() {
+            var myMap = new ymaps.Map("map", {
+                    center: [55.76, 37.64],
+                    zoom: 10,
+                    controls: []
+                });
+
+            {% for addr in addrs %}
+                ymaps.geocode("{{ addr }}", {
+                    results: 1
+                }).then(function (res) {
+                        var firstGeoObject = res.geoObjects.get(0),
+                            coords = firstGeoObject.geometry.getCoordinates(),
+                            bounds = firstGeoObject.properties.get('boundedBy');
+
+                        firstGeoObject.options.set('preset', 'islands#darkBlueDotIconWithCaption');
+                        firstGeoObject.properties.set('iconCaption', firstGeoObject.getAddressLine());
+
+                        myMap.geoObjects.add(firstGeoObject);
+                        myMap.setBounds(bounds, {
+                            checkZoomRange: true
+                        });
+
+                        console.log(firstGeoObject.geometry.getCoordinates()[0], firstGeoObject.geometry.getCoordinates()[1]);
+                    });
+            {% endfor %}
+        }
+    </script>
+    <style>
+        html, body, #map {
+            width: 100%; height: 100%; padding: 0; margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+</body>
+</html>
